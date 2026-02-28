@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת ניהול - רותם בר</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@300;400;500;600&family=Alef:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --cream: #FFF8F0;
+            --sand: #F5EBE0;
+            --sea-light: #E8F4F2;
+            --sea: #B8D4D4;
+            --ocean: #7CA8A8;
+            --deep: #5A8585;
+            --darker: #3D5A5A;
+            --text: #2C3E3E;
+        }
+
+        body {
+            font-family: 'Alef', sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, var(--sea-light) 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        /* Admin Dashboard */
+        .admin-dashboard {
+            max-width: 1800px;
+            width: 100%;
+            padding: 2rem 3rem;
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem 2.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(124, 168, 168, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--darker);
+            letter-spacing: 3px;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .admin-tab {
+            padding: 1rem 2.5rem;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(184, 212, 212, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            letter-spacing: 1.5px;
+            transition: all 0.3s ease;
+        }
+
+        .admin-tab.active {
+            background: linear-gradient(135deg, var(--ocean) 0%, var(--deep) 100%);
+            color: white;
+            border-color: var(--ocean);
+            box-shadow: 0 8px 30px rgba(124, 168, 168, 0.3);
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 15px 50px rgba(124, 168, 168, 0.2);
+            margin-bottom: 2.5rem;
+            border: 1px solid rgba(184, 212, 212, 0.3);
+        }
+
+        .form-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            color: var(--darker);
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+            text-align: right;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.6rem;
+            color: var(--darker);
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid rgba(184, 212, 212, 0.4);
+            border-radius: 8px;
+            font-family: 'Alef', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--ocean);
+            box-shadow: 0 0 0 3px rgba(124, 168, 168, 0.1);
+        }
+
+        .form-input[type="file"] {
+            padding: 0.8rem;
+            cursor: pointer;
+        }
+
+        .image-preview {
+            margin-top: 1rem;
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid rgba(184, 212, 212, 0.3);
+            display: none;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-preview.show {
+            display: block;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 1.2rem;
+            border: 1px solid rgba(184, 212, 212, 0.4);
+            border-radius: 8px;
+            font-family: 'Alef', sans-serif;
+            font-size: 1rem;
+            min-height: 150px;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--ocean);
+            box-shadow: 0 0 0 3px rgba(124, 168, 168, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--ocean) 0%, var(--deep) 100%);
+            color: white;
+            border: none;
+            padding: 1.2rem 3rem;
+            font-size: 1.05rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 25px rgba(124, 168, 168, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 35px rgba(124, 168, 168, 0.4);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(124, 168, 168, 0.15);
+            border: 1px solid rgba(184, 212, 212, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(124, 168, 168, 0.25);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 240px;
+            background: linear-gradient(135deg, 
+                rgba(232, 244, 242, 0.4) 0%,
+                rgba(184, 212, 212, 0.3) 50%,
+                rgba(245, 235, 224, 0.4) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            margin-bottom: 0.6rem;
+            color: var(--darker);
+        }
+
+        .product-description {
+            color: var(--text);
+            margin-bottom: 0.8rem;
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+
+        .product-price {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            color: var(--ocean);
+            margin-bottom: 1rem;
+        }
+
+        .orders-list {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .order-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(124, 168, 168, 0.15);
+            border: 1px solid rgba(184, 212, 212, 0.3);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.2rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(184, 212, 212, 0.2);
+        }
+
+        .order-id {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            color: var(--darker);
+        }
+
+        .order-status {
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #fff3cd, #ffe8a1);
+            color: #856404;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .order-details {
+            line-height: 1.8;
+            margin-bottom: 1.2rem;
+        }
+
+        .order-items {
+            padding-top: 1.2rem;
+            border-top: 1px solid rgba(184, 212, 212, 0.2);
+        }
+
+        .order-item {
+            padding: 0.8rem;
+            margin-top: 0.6rem;
+            background: rgba(184, 212, 212, 0.1);
+            border-radius: 8px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Image Modal */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .image-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90vh;
+            position: relative;
+            animation: modalZoom 0.3s ease;
+        }
+
+        @keyframes modalZoom {
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: white;
+            color: black;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--ocean);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .modal-info {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .modal-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: var(--darker);
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-price {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            color: var(--ocean);
+        }
+    </style>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
+        <div style="background: rgba(255, 255, 255, 0.95); padding: 3rem; border-radius: 16px; box-shadow: 0 20px 60px rgba(124, 168, 168, 0.3); max-width: 450px; width: 100%;">
+            <h1 style="font-family: 'Cinzel', serif; font-size: 2rem; text-align: center; margin-bottom: 2rem; color: var(--darker);">התחברות למערכת</h1>
+            <div id="loginError" style="display: none; color: #c44569; text-align: center; padding: 1rem; background: rgba(196, 69, 105, 0.1); border-radius: 8px; margin-bottom: 1rem;">שם משתמש או סיסמה שגויים</div>
+            <form id="loginForm">
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--darker);">שם משתמש</label>
+                    <input type="text" id="loginUsername" required style="width: 100%; padding: 1rem; border: 1px solid rgba(184, 212, 212, 0.4); border-radius: 8px; font-family: 'Alef', sans-serif; font-size: 1rem;">
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--darker);">סיסמה</label>
+                    <input type="password" id="loginPassword" required style="width: 100%; padding: 1rem; border: 1px solid rgba(184, 212, 212, 0.4); border-radius: 8px; font-family: 'Alef', sans-serif; font-size: 1rem;">
+                </div>
+                <button type="submit" class="btn" style="width: 100%; background: linear-gradient(135deg, var(--ocean), var(--deep)); color: white; border: none; padding: 1.2rem; font-size: 1.1rem; cursor: pointer; border-radius: 8px;">התחבר</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="admin-dashboard" style="display: none;">
+        <div class="admin-header">
+            <h1 class="admin-title">מערכת ניהול</h1>
+            <button onclick="logout()" style="background: linear-gradient(135deg, #c44569, #9b3654); color: white; border: none; padding: 0.8rem 2rem; border-radius: 8px; cursor: pointer; font-family: 'Alef', sans-serif;">התנתק</button>
+        </div>
+
+        <div class="admin-tabs">
+            <button class="admin-tab active" onclick="showTab('products')">ניהול מוצרים</button>
+            <button class="admin-tab" onclick="showTab('orders')">הזמנות (<span id="ordersCount">0</span>)</button>
+            <button class="admin-tab" onclick="showTab('social')">קישורים חברתיים</button>
+            <button class="admin-tab" onclick="showTab('content')">תוכן האתר</button>
+            <button class="admin-tab" onclick="showTab('settings')">הגדרות</button>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="productsTab">
+            <div class="form-container">
+                <h3 class="form-title">הוסף מוצר חדש</h3>
+                <form id="addProductForm">
+                    <div class="form-group">
+                        <label class="form-label">שם המוצר</label>
+                        <input type="text" class="form-input" id="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">תיאור</label>
+                        <textarea class="form-textarea" id="productDescription" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">מחיר (₪)</label>
+                        <input type="number" class="form-input" id="productPrice" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">תמונת המוצר</label>
+                        <input type="file" class="form-input" id="productImage" accept="image/*" onchange="previewImage(event)">
+                        <div class="image-preview" id="imagePreview">
+                            <img id="previewImg" src="" alt="תצוגה מקדימה">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">אמוג'י (אופציונלי - אם אין תמונה)</label>
+                        <input type="text" class="form-input" id="productEmoji" placeholder="🕯️">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">סטטוס מלאי</label>
+                        <select class="form-input" id="productStock">
+                            <option value="in-stock">במלאי</option>
+                            <option value="out-of-stock">אזל מהמלאי</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="submit" class="btn" style="flex: 1;">הוסף מוצר</button>
+                        <button type="button" class="btn" onclick="cancelEdit()" style="flex: 1; background: linear-gradient(135deg, #868e96, #495057); display: none;" id="cancelEditBtn">ביטול</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="products-grid" id="adminProductsGrid"></div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div id="ordersTab" class="hidden">
+            <div class="orders-list" id="ordersList"></div>
+        </div>
+
+        <!-- Social Links Tab -->
+        <div id="socialTab" class="hidden">
+            <div class="form-container">
+                <h3 class="form-title">קישורים חברתיים</h3>
+                <form id="socialForm">
+                    <div class="form-group">
+                        <label class="form-label">📷 אינסטגרם</label>
+                        <input type="url" class="form-input" id="socialInstagram" placeholder="https://instagram.com/username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">💬 ווצאפ (מספר בלבד, לדוגמה: 972501234567)</label>
+                        <input type="text" class="form-input" id="socialWhatsapp" placeholder="972501234567">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">📘 פייסבוק</label>
+                        <input type="url" class="form-input" id="socialFacebook" placeholder="https://facebook.com/page">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">📞 טלפון</label>
+                        <input type="tel" class="form-input" id="socialPhone" placeholder="050-1234567">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">✉️ אימייל</label>
+                        <input type="email" class="form-input" id="socialEmail" placeholder="email@example.com">
+                    </div>
+                    <button type="submit" class="btn">שמור קישורים</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Content Tab -->
+        <div id="contentTab" class="hidden">
+            <div class="form-container">
+                <h3 class="form-title">עריכת תוכן האתר</h3>
+                <form id="contentForm">
+                    <div class="form-group">
+                        <label class="form-label">כותרת ראשית</label>
+                        <input type="text" class="form-input" id="contentTitle" placeholder="רותם בר">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">כותרת משנה</label>
+                        <input type="text" class="form-input" id="contentSubtitle" placeholder="אומנות הנרות">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">פוטר - שמאל</label>
+                        <input type="text" class="form-input" id="contentFooterLeft" placeholder="Art Candle">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">פוטר - מרכז</label>
+                        <input type="text" class="form-input" id="contentFooterCenter" placeholder="By Rotem Bar">
+                    </div>
+                    <button type="submit" class="btn">שמור שינויים</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settingsTab" class="hidden">
+            <div class="form-container">
+                <h3 class="form-title">שינוי פרטי התחברות</h3>
+                <div id="settingsError" style="display: none; color: #c44569; padding: 1rem; background: rgba(196, 69, 105, 0.1); border-radius: 8px; margin-bottom: 1rem;">הסיסמה הנוכחית שגויה</div>
+                <form id="settingsForm">
+                    <div class="form-group">
+                        <label class="form-label">סיסמה נוכחית</label>
+                        <input type="password" class="form-input" id="settingsCurrentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">שם משתמש חדש</label>
+                        <input type="text" class="form-input" id="settingsNewUsername">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">סיסמה חדשה</label>
+                        <input type="password" class="form-input" id="settingsNewPassword">
+                    </div>
+                    <button type="submit" class="btn">עדכן פרטים</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Authentication System
+        let credentials = JSON.parse(localStorage.getItem('adminCredentials')) || {
+            username: 'Rotem_bar_art',
+            password: '75546960AB@'
+        };
+
+        // Check login on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminDashboard').style.display = 'block';
+            }
+        });
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (username === credentials.username && password === credentials.password) {
+                sessionStorage.setItem('isLoggedIn', 'true');
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminDashboard').style.display = 'block';
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        });
+
+        // Logout function
+        function logout() {
+            sessionStorage.removeItem('isLoggedIn');
+            window.location.reload();
+        }
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD0FR_fcS9t8V6cWOmdgTS6XfKUB3xu1gw",
+            authDomain: "art-candle.firebaseapp.com",
+            projectId: "art-candle",
+            storageBucket: "art-candle.firebasestorage.app",
+            messagingSenderId: "594257348060",
+            appId: "1:594257348060:web:fc9cebba1d6bc98878fb19"
+        };
+
+        // Initialize Firebase after page loads
+        let db;
+        let useFirebase = false;
+        
+        // Wait for Firebase SDK to load
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                if (typeof firebase !== 'undefined') {
+                    firebase.initializeApp(firebaseConfig);
+                    db = firebase.firestore();
+                    useFirebase = true;
+                    console.log('✅ Firebase connected successfully');
+                    
+                    // Load data after Firebase is ready
+                    window.onload();
+                } else {
+                    console.log('⚠️ Firebase SDK not loaded');
+                    useFirebase = false;
+                }
+            } catch (error) {
+                console.log('⚠️ Firebase initialization error:', error.message);
+                useFirebase = false;
+            }
+        });
+
+        // Data Storage with Firebase sync
+        let products = [];
+        let orders = [];
+
+        // Load products from Firebase or localStorage
+        async function loadProductsFromStorage() {
+            if (useFirebase) {
+                try {
+                    const snapshot = await db.collection('products').get();
+                    products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    console.log('✅ Loaded products from Firebase:', products.length);
+                    
+                    // Sync to localStorage for offline access
+                    localStorage.setItem('products', JSON.stringify(products));
+                } catch (error) {
+                    console.error('Error loading from Firebase:', error);
+                    // Fallback to localStorage
+                    products = JSON.parse(localStorage.getItem('products')) || getDefaultProducts();
+                }
+            } else {
+                products = JSON.parse(localStorage.getItem('products')) || getDefaultProducts();
+            }
+            
+            loadProducts();
+        }
+
+        function getDefaultProducts() {
+            return [
+                { id: 'prod_1', name: 'נר צדפה', description: 'נר בעבודת יד בצורת צדפה עם ניחוח ימי רענן המזכיר את החוף והים', price: 120, emoji: '🐚', stock: 'in-stock' },
+                { id: 'prod_2', name: 'נר כוכב ים', description: 'נר מעוצב עם ריח של חופש וקיץ, שמביא איתו זכרונות של חופשה', price: 150, emoji: '⭐', stock: 'in-stock' },
+                { id: 'prod_3', name: 'נר גלי ים', description: 'נר עם שעוות סויה טבעית וניחוח אוקיינוס המרגיע את הנפש', price: 140, emoji: '🌊', stock: 'in-stock' }
+            ];
+        }
+
+        // Load orders from Firebase or localStorage
+        async function loadOrdersFromStorage() {
+            if (useFirebase) {
+                try {
+                    const snapshot = await db.collection('orders').orderBy('date', 'desc').get();
+                    orders = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+                    console.log('✅ Loaded orders from Firebase:', orders.length);
+                    
+                    // Sync to localStorage
+                    localStorage.setItem('orders', JSON.stringify(orders));
+                } catch (error) {
+                    console.error('Error loading orders from Firebase:', error);
+                    orders = JSON.parse(localStorage.getItem('orders')) || [];
+                }
+            } else {
+                orders = JSON.parse(localStorage.getItem('orders')) || [];
+            }
+            
+            loadOrders();
+            updateOrdersCount();
+        }
+
+
+        // Save product function (global scope with Firebase sync)
+        async function saveProduct(imageData, stockStatus, isEditing) {
+            const productData = {
+                name: document.getElementById('productName').value,
+                description: document.getElementById('productDescription').value,
+                price: parseFloat(document.getElementById('productPrice').value),
+                image: imageData,
+                emoji: document.getElementById('productEmoji').value || (imageData ? null : '🕯️'),
+                stock: stockStatus
+            };
+
+            try {
+                if (isEditing) {
+                    // Update existing product
+                    const index = products.findIndex(p => p.id == window.editingProductId);
+                    if (index !== -1) {
+                        products[index] = { ...products[index], ...productData };
+                        
+                        // Save to Firebase
+                        if (useFirebase) {
+                            await db.collection('products').doc(String(window.editingProductId)).update(productData);
+                            console.log('✅ Product updated in Firebase');
+                        }
+                        
+                        // Backup to localStorage
+                        localStorage.setItem('products', JSON.stringify(products));
+                        console.log('Product updated:', products[index]);
+                        alert('המוצר עודכן בהצלחה! ✨');
+                        cancelEdit();
+                    }
+                } else {
+                    // Add new product
+                    const productId = 'prod_' + Date.now();
+                    const newProduct = {
+                        id: productId,
+                        ...productData
+                    };
+                    
+                    // Save to Firebase
+                    if (useFirebase) {
+                        await db.collection('products').doc(productId).set(productData);
+                        console.log('✅ Product added to Firebase');
+                    }
+                    
+                    products.push(newProduct);
+                    localStorage.setItem('products', JSON.stringify(products));
+                    console.log('Product saved:', newProduct);
+                    document.getElementById('addProductForm').reset();
+                    document.getElementById('imagePreview').classList.remove('show');
+                    alert('המוצר נוסף בהצלחה! ✨');
+                }
+                
+                loadProducts();
+            } catch (error) {
+                console.error('Error saving product:', error);
+                alert('שגיאה בשמירת המוצר: ' + error.message);
+            }
+        }
+
+        // Initialize on page load
+        window.onload = async function() {
+            // Load data from Firebase or localStorage
+            await loadProductsFromStorage();
+            await loadOrdersFromStorage();
+            
+            // Setup form handler
+            document.getElementById('addProductForm').onsubmit = function(e) {
+                e.preventDefault();
+                console.log('Form submitted!');
+
+                const imageFile = document.getElementById('productImage').files[0];
+                const stockStatus = document.getElementById('productStock').value;
+                const isEditing = window.editingProductId !== null && window.editingProductId !== undefined;
+                
+                console.log('Image file:', imageFile);
+                console.log('Stock status:', stockStatus);
+                console.log('Is editing:', isEditing);
+                
+                if (imageFile) {
+                    console.log('Processing image...');
+                    // Convert and compress image
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const img = new Image();
+                        img.onload = function() {
+                            // Compress image to max 800x800
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+                            const maxSize = 800;
+                            
+                            if (width > height && width > maxSize) {
+                                height *= maxSize / width;
+                                width = maxSize;
+                            } else if (height > maxSize) {
+                                width *= maxSize / height;
+                                height = maxSize;
+                            }
+                            
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            
+                            const compressedImage = canvas.toDataURL('image/jpeg', 0.8);
+                            console.log('Image compressed');
+                            
+                            saveProduct(compressedImage, stockStatus, isEditing);
+                        };
+                        img.src = event.target.result;
+                    };
+                    reader.onerror = function(error) {
+                        console.error('Error reading image:', error);
+                        alert('שגיאה בקריאת התמונה');
+                    };
+                    reader.readAsDataURL(imageFile);
+                } else {
+                    // No new image - use existing or emoji
+                    let imageData = null;
+                    if (isEditing) {
+                        const existingProduct = products.find(p => p.id === window.editingProductId);
+                        imageData = existingProduct ? existingProduct.image : null;
+                    }
+                    saveProduct(imageData, stockStatus, isEditing);
+                }
+            };
+
+        };
+
+        // Image preview
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImg').src = e.target.result;
+                    document.getElementById('imagePreview').classList.add('show');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('productsTab').classList.toggle('hidden', tab !== 'products');
+            document.getElementById('ordersTab').classList.toggle('hidden', tab !== 'orders');
+            document.getElementById('socialTab').classList.toggle('hidden', tab !== 'social');
+            document.getElementById('contentTab').classList.toggle('hidden', tab !== 'content');
+            document.getElementById('settingsTab').classList.toggle('hidden', tab !== 'settings');
+
+            if (tab === 'orders') {
+                loadOrders();
+            } else if (tab === 'social') {
+                loadSocialLinks();
+            } else if (tab === 'content') {
+                loadSiteContent();
+            }
+        }
+
+        // Products Management
+        function loadProducts() {
+            const grid = document.getElementById('adminProductsGrid');
+            grid.innerHTML = products.map(product => {
+                const imageDisplay = product.image 
+                    ? `<img src="${product.image}" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" onclick="openModal('${product.id}')">` 
+                    : `<div style="cursor: pointer;" onclick="openModal('${product.id}')">${product.emoji}</div>`;
+                
+                const stockStatus = product.stock === 'out-of-stock' 
+                    ? '<div style="background: #ff6b6b; color: white; padding: 0.5rem 1rem; border-radius: 20px; display: inline-block; margin-bottom: 1rem; font-size: 0.9rem;">אזל מהמלאי</div>'
+                    : '<div style="background: #51cf66; color: white; padding: 0.5rem 1rem; border-radius: 20px; display: inline-block; margin-bottom: 1rem; font-size: 0.9rem;">במלאי</div>';
+                
+                const toggleButton = product.stock === 'out-of-stock'
+                    ? `<button class="btn" onclick="toggleStock('${product.id}')" style="background: linear-gradient(135deg, #51cf66, #37b24d); width: 100%; margin-bottom: 0.5rem;">החזר למלאי</button>`
+                    : `<button class="btn" onclick="toggleStock('${product.id}')" style="background: linear-gradient(135deg, #ff9800, #f57c00); width: 100%; margin-bottom: 0.5rem;">סמן כאזל מהמלאי</button>`;
+                
+                return `
+                    <div class="product-card">
+                        <div class="product-image">${imageDisplay}</div>
+                        <div class="product-info">
+                            ${stockStatus}
+                            <h3 class="product-name">${product.name}</h3>
+                            <p class="product-description">${product.description}</p>
+                            <div class="product-price">₪${product.price}</div>
+                            <button class="btn" onclick="editProduct('${product.id}')" style="background: linear-gradient(135deg, #4dabf7, #228be6); width: 100%; margin-bottom: 0.5rem;">ערוך מוצר</button>
+                            ${toggleButton}
+                            <button class="btn" onclick="deleteProduct('${product.id}')" style="background: linear-gradient(135deg, #c44569, #9b3654); width: 100%;">מחק מוצר</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openModal(productId) {
+            const product = products.find(p => p.id == productId);
+            if (!product) return;
+
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            const modalName = document.getElementById('modalName');
+            const modalPrice = document.getElementById('modalPrice');
+
+            if (product.image) {
+                modalImage.src = product.image;
+                modalImage.style.display = 'block';
+            } else {
+                modalImage.style.display = 'none';
+            }
+
+            modalName.textContent = product.name;
+            modalPrice.textContent = `₪${product.price}`;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(event) {
+            if (event.target.classList.contains('image-modal') || 
+                event.target.classList.contains('modal-close') ||
+                event.currentTarget.classList.contains('modal-close')) {
+                const modal = document.getElementById('imageModal');
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+
+        async function deleteProduct(productId) {
+            if (confirm('האם אתה בטוח שברצונך למחוק את המוצר?')) {
+                try {
+                    console.log('Deleting product:', productId);
+                    // Delete from Firebase
+                    if (useFirebase) {
+                        await db.collection('products').doc(String(productId)).delete();
+                        console.log('✅ Product deleted from Firebase');
+                    }
+                    
+                    products = products.filter(p => p.id != productId);
+                    localStorage.setItem('products', JSON.stringify(products));
+                    loadProducts();
+                    alert('המוצר נמחק בהצלחה');
+                } catch (error) {
+                    console.error('Error deleting product:', error);
+                    alert('שגיאה במחיקת המוצר: ' + error.message);
+                }
+            }
+        }
+
+        function editProduct(productId) {
+            const product = products.find(p => p.id == productId);
+            if (!product) return;
+
+            // Fill form with product data
+            document.getElementById('productName').value = product.name;
+            document.getElementById('productDescription').value = product.description;
+            document.getElementById('productPrice').value = product.price;
+            document.getElementById('productEmoji').value = product.emoji || '';
+            document.getElementById('productStock').value = product.stock || 'in-stock';
+
+            // Show image preview if exists
+            if (product.image) {
+                document.getElementById('previewImg').src = product.image;
+                document.getElementById('imagePreview').classList.add('show');
+            }
+
+            // Change form title and button
+            document.querySelector('.form-title').textContent = 'ערוך מוצר';
+            const submitBtn = document.querySelector('#addProductForm button[type="submit"]');
+            submitBtn.textContent = 'עדכן מוצר';
+            submitBtn.style.background = 'linear-gradient(135deg, #4dabf7, #228be6)';
+            
+            // Show cancel button
+            document.getElementById('cancelEditBtn').style.display = 'block';
+
+            // Store editing product ID
+            window.editingProductId = productId;
+
+            // Scroll to form
+            document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function cancelEdit() {
+            document.querySelector('.form-title').textContent = 'הוסף מוצר חדש';
+            const submitBtn = document.querySelector('#addProductForm button[type="submit"]');
+            submitBtn.textContent = 'הוסף מוצר';
+            submitBtn.style.background = 'linear-gradient(135deg, var(--ocean) 0%, var(--deep) 100%)';
+            
+            // Hide cancel button
+            document.getElementById('cancelEditBtn').style.display = 'none';
+            
+            window.editingProductId = null;
+            document.getElementById('addProductForm').reset();
+            document.getElementById('imagePreview').classList.remove('show');
+        }
+
+        async function toggleStock(productId) {
+            const product = products.find(p => p.id == productId);
+            if (product) {
+                try {
+                    console.log('Toggling stock for:', productId);
+                    product.stock = product.stock === 'out-of-stock' ? 'in-stock' : 'out-of-stock';
+                    
+                    // Update in Firebase
+                    if (useFirebase) {
+                        await db.collection('products').doc(String(productId)).update({ stock: product.stock });
+                        console.log('✅ Stock updated in Firebase');
+                    }
+                    
+                    localStorage.setItem('products', JSON.stringify(products));
+                    loadProducts();
+                    
+                    const message = product.stock === 'out-of-stock' 
+                        ? 'המוצר סומן כאזל מהמלאי' 
+                        : 'המוצר הוחזר למלאי';
+                    alert(message);
+                } catch (error) {
+                    console.error('Error updating stock:', error);
+                    alert('שגיאה בעדכון המלאי: ' + error.message);
+                }
+            }
+        }
+
+        // Orders Management
+        function loadOrders() {
+            const ordersList = document.getElementById('ordersList');
+
+            if (orders.length === 0) {
+                ordersList.innerHTML = `
+                    <div style="padding: 4rem; text-align: center; background: rgba(255, 255, 255, 0.9); border-radius: 12px;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;">📦</div>
+                        <div style="color: var(--ocean); font-size: 1.2rem;">אין הזמנות כרגע</div>
+                    </div>
+                `;
+                return;
+            }
+
+            ordersList.innerHTML = orders.map(order => `
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-id">הזמנה #${order.id}</div>
+                            <div style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+                                ${new Date(order.date).toLocaleDateString('he-IL', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <span class="order-status">ממתין לטיפול</span>
+                            <button onclick="deleteOrder(${order.id})" style="background: #c44569; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">מחק</button>
+                        </div>
+                    </div>
+                    <div class="order-details">
+                        <div><strong style="color: var(--darker);">לקוח:</strong> ${order.customer.name}</div>
+                        <div><strong style="color: var(--darker);">טלפון:</strong> ${order.customer.phone}</div>
+                        ${order.customer.email ? `<div><strong style="color: var(--darker);">אימייל:</strong> ${order.customer.email}</div>` : ''}
+                        <div style="margin-top: 1rem;"><strong style="color: var(--ocean); font-family: 'Cinzel', serif; font-size: 1.3rem;">סה"כ: ₪${order.total}</strong></div>
+                    </div>
+                    <div class="order-items">
+                        <strong style="color: var(--darker);">פריטים בהזמנה:</strong>
+                        ${order.items.map(item => `
+                            <div class="order-item">
+                                <span style="font-size: 1.5rem; margin-left: 0.5rem;">${item.emoji || '🕯️'}</span>
+                                <strong>${item.name}</strong> × ${item.quantity} = ₪${item.price * item.quantity}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function deleteOrder(orderId) {
+            if (confirm('האם אתה בטוח שברצונך למחוק את ההזמנה?')) {
+                try {
+                    // Delete from Firebase
+                    if (useFirebase) {
+                        await db.collection('orders').doc(orderId.toString()).delete();
+                        console.log('✅ Order deleted from Firebase');
+                    }
+                    
+                    orders = orders.filter(o => o.id !== orderId);
+                    localStorage.setItem('orders', JSON.stringify(orders));
+                    loadOrders();
+                    updateOrdersCount();
+                    alert('ההזמנה נמחקה בהצלחה');
+                } catch (error) {
+                    console.error('Error deleting order:', error);
+                    alert('שגיאה במחיקת ההזמנה: ' + error.message);
+                }
+            }
+        }
+
+        function updateOrdersCount() {
+            document.getElementById('ordersCount').textContent = orders.length;
+        }
+
+        // Social Links Management
+        function loadSocialLinks() {
+            const links = JSON.parse(localStorage.getItem('socialLinks')) || {};
+            document.getElementById('socialInstagram').value = links.instagram || '';
+            document.getElementById('socialWhatsapp').value = links.whatsapp || '';
+            document.getElementById('socialFacebook').value = links.facebook || '';
+            document.getElementById('socialPhone').value = links.phone || '';
+            document.getElementById('socialEmail').value = links.email || '';
+        }
+
+        document.getElementById('socialForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const links = {
+                instagram: document.getElementById('socialInstagram').value,
+                whatsapp: document.getElementById('socialWhatsapp').value,
+                facebook: document.getElementById('socialFacebook').value,
+                phone: document.getElementById('socialPhone').value,
+                email: document.getElementById('socialEmail').value
+            };
+            localStorage.setItem('socialLinks', JSON.stringify(links));
+            alert('הקישורים נשמרו בהצלחה! ✨');
+        });
+
+        // Site Content Management
+        function loadSiteContent() {
+            const content = JSON.parse(localStorage.getItem('siteContent')) || {};
+            document.getElementById('contentTitle').value = content.title || 'רותם בר';
+            document.getElementById('contentSubtitle').value = content.subtitle || 'אומנות הנרות';
+            document.getElementById('contentFooterLeft').value = content.footerLeft || 'Art Candle';
+            document.getElementById('contentFooterCenter').value = content.footerCenter || 'By Rotem Bar';
+        }
+
+        document.getElementById('contentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const content = {
+                title: document.getElementById('contentTitle').value,
+                subtitle: document.getElementById('contentSubtitle').value,
+                footerLeft: document.getElementById('contentFooterLeft').value,
+                footerCenter: document.getElementById('contentFooterCenter').value
+            };
+            localStorage.setItem('siteContent', JSON.stringify(content));
+            alert('התוכן נשמר בהצלחה! ✨');
+        });
+
+        // Settings Management
+        document.getElementById('settingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const currentPassword = document.getElementById('settingsCurrentPassword').value;
+            const newUsername = document.getElementById('settingsNewUsername').value;
+            const newPassword = document.getElementById('settingsNewPassword').value;
+
+            if (currentPassword !== credentials.password) {
+                document.getElementById('settingsError').style.display = 'block';
+                return;
+            }
+
+            if (newUsername) credentials.username = newUsername;
+            if (newPassword) credentials.password = newPassword;
+
+            localStorage.setItem('adminCredentials', JSON.stringify(credentials));
+            alert('הפרטים עודכנו בהצלחה! ✨');
+            this.reset();
+            document.getElementById('settingsError').style.display = 'none';
+        });
+    </script>
+
+    <!-- Image Modal -->
+    <div class="image-modal" id="imageModal" onclick="closeModal(event)">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal(event)">×</button>
+            <img class="modal-image" id="modalImage" src="" alt="">
+            <div class="modal-info">
+                <div class="modal-name" id="modalName"></div>
+                <div class="modal-price" id="modalPrice"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
