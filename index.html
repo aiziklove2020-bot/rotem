@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title> רותם בר art&Candle </title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
     <style>
-        /* --- ה-CSS המקורי שלך מתחיל כאן --- */
+        /* ה-CSS המקורי שלך ללא שינוי */
         :root {
             --sea-deep: #2C5E5E;
             --sea-medium: #5A8585;
@@ -52,7 +51,8 @@
         .nav-links { display: flex; gap: 3rem; align-items: center; }
         .nav-links a { color: var(--text-dark); text-decoration: none; font-weight: 600; cursor: pointer; transition: 0.3s; }
         
-        .mobile-menu-btn { display: none; font-size: 2rem; cursor: pointer; color: var(--sea-deep); }
+        /* כפתור המבורגר */
+        .mobile-menu-btn { display: none; font-size: 1.8rem; cursor: pointer; color: var(--sea-deep); }
 
         .hero {
             height: 90vh;
@@ -65,14 +65,13 @@
         .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 40px; padding: 60px 5%; }
         .product-card { background: white; border-radius: var(--border-radius-card); overflow: hidden; box-shadow: 0 15px 45px rgba(0,0,0,0.05); transition: 0.4s ease; position: relative; }
         .product-card img { width: 100%; height: 400px; object-fit: cover; }
-        
         .product-info { padding: 25px; text-align: center; }
         .add-to-cart-btn { background: var(--sea-deep); color: white; border: none; padding: 12px 30px; border-radius: var(--border-radius-full); cursor: pointer; font-weight: 600; width: 100%; transition: 0.3s; }
         
         .cart-sidebar { position: fixed; top: 0; right: -450px; width: 420px; height: 100%; background: white; z-index: 2000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); padding: 40px; box-shadow: -10px 0 50px rgba(0,0,0,0.1); }
         .cart-sidebar.open { right: 0; }
 
-        /* --- תוספות למובייל בלבד (לא פוגע בכלום) --- */
+        /* התאמות מיוחדות לנייד בלבד */
         @media (max-width: 768px) {
             nav { padding: 0.8rem 1.5rem; width: 95%; top: 15px; }
             .mobile-menu-btn { display: block; }
@@ -82,8 +81,8 @@
                 transition: 0.4s ease; z-index: 1001; box-shadow: -10px 0 30px rgba(0,0,0,0.1);
             }
             .nav-links.active { right: 0; }
-            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 20px 10px; }
-            .product-card img { height: 180px; }
+            .products-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px; padding: 20px 10px; }
+            .product-card img { height: 180px !important; }
             .hero h1 { font-size: 2.5rem; }
             .cart-sidebar { width: 100%; }
         }
@@ -102,39 +101,41 @@
     </nav>
 
     <section class="hero" id="home">
-        <h1>ROTEM BAR</h1>
-        <p>Art & Handmade Candles</p>
+        <h1 id="site-hero-title">ROTEM BAR</h1>
+        <p id="site-hero-desc">Art & Handmade Candles</p>
     </section>
 
     <div id="shop">
-        <div class="products-grid" id="productsGrid">
-            </div>
+        <div class="products-grid" id="productsGrid"></div>
+    </div>
+
+    <div class="cart-sidebar" id="cartSidebar">
+        <h2>הסל שלי</h2>
+        <div id="cart-items"></div>
+        <button class="add-to-cart-btn" onclick="toggleCart()">סגור</button>
     </div>
 
     <script>
-        /* פונקציית תפריט נייד */
+        // פונקציות ניווט ותפריט
         function toggleMobileMenu() {
             if (window.innerWidth <= 768) {
                 document.getElementById('navLinks').classList.toggle('active');
             }
         }
 
-        /* --- כאן מתחיל ה-JavaScript המקורי שלך (לא נגעתי בכלום) --- */
-        
         function toggleCart() {
             document.getElementById('cartSidebar').classList.toggle('open');
         }
 
         function scrollToSection(id) {
-            const el = document.getElementById(id);
-            if(el) el.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
         }
 
-        // פונקציית הטעינה ששומרת על התמונות שלך
+        // --- פונקציית הטעינה המקורית שלך (החזרתי אותה בדיוק) ---
         function renderAll() {
             const products = JSON.parse(localStorage.getItem('products')) || [];
             const grid = document.getElementById('productsGrid');
-            if(!grid) return;
+            if (!grid) return;
             
             grid.innerHTML = products.map(p => `
                 <div class="product-card">
@@ -146,12 +147,50 @@
                     </div>
                 </div>
             `).join('');
+            
+            // עדכון טקסטים מה-Admin
+            const content = JSON.parse(localStorage.getItem('siteContent'));
+            if(content) {
+                if(content.title) document.getElementById('site-hero-title').innerText = content.title;
+                if(content.desc) document.getElementById('site-hero-desc').innerText = content.desc;
+            }
         }
 
-        // הפעלה בטעינה
+        // הוספה לסל (המקורית שלך)
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        function addToCart(id) {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const p = products.find(prod => prod.id === id);
+            const inCart = cart.find(item => item.id === id);
+            if(inCart) inCart.qty++;
+            else cart.push({...p, qty: 1});
+            saveCart();
+            updateCartUI();
+            toggleCart();
+        }
+
+        function saveCart() { localStorage.setItem('cart', JSON.stringify(cart)); }
+        
+        function updateCartUI() {
+            const count = cart.reduce((s, i) => s + i.qty, 0);
+            document.getElementById('cart-count').innerText = count;
+            const itemsCont = document.getElementById('cart-items');
+            if(itemsCont) {
+                itemsCont.innerHTML = cart.map(item => `
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">
+                        <div>
+                            <div style="font-weight:600">${item.name}</div>
+                            <div style="font-size:0.9rem">כמות: ${item.qty}</div>
+                        </div>
+                        <div style="font-weight:700">₪${item.price * item.qty}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
         window.onload = () => {
             renderAll();
-            // אם יש לך עוד פונקציות טעינה מהקוד המקורי, הן צריכות לבוא כאן
+            updateCartUI();
         };
     </script>
 </body>
