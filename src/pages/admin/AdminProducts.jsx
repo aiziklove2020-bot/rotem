@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { useData } from '../../context/DataContext'
 import { useTranslation } from '../../i18n/useTranslation'
 
@@ -7,7 +7,6 @@ export function AdminProducts() {
   const t = useTranslation()
   const [formOpen, setFormOpen] = useState(false)
   const [alert, setAlert] = useState('')
-  const formRef = useRef(null)
 
   const showAlert = (msg) => {
     setAlert(msg)
@@ -62,59 +61,35 @@ export function AdminProducts() {
         </div>
         <div className="admin-panel-body">
           {formOpen && (
-            <form
-              ref={formRef}
-              onSubmit={handleAdd}
-              style={{
-                display: 'block',
-                background: '#000',
-                padding: '25px',
-                border: '1px solid var(--accent-gold)',
-                marginBottom: '30px',
-                borderRadius: 'var(--radius-md)',
-              }}
-            >
-              <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '5px' }}>
-                {t('admin.products.name')}
-              </label>
+            <form onSubmit={handleAdd} className="admin-product-form">
+              <label className="admin-form-label">{t('admin.products.name')}</label>
               <input type="text" name="name" className="admin-input-ui" required />
-              <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '5px' }}>
-                {t('admin.products.description')}
-              </label>
-              <textarea name="description" className="admin-input-ui" rows={2} style={{ resize: 'vertical', minHeight: '80px' }} />
-              <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '5px' }}>
-                {t('admin.products.price')}
-              </label>
+              <label className="admin-form-label">{t('admin.products.description')}</label>
+              <textarea name="description" className="admin-input-ui admin-input-textarea" rows={2} />
+              <label className="admin-form-label">{t('admin.products.price')}</label>
               <input type="number" name="price" className="admin-input-ui" step="0.01" required />
-              <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '5px' }}>
-                {t('admin.products.emoji')}
-              </label>
+              <label className="admin-form-label">{t('admin.products.emoji')}</label>
               <input type="text" name="emoji" className="admin-input-ui" placeholder="🕯️" />
-              <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '5px' }}>
-                {t('admin.products.image')}
-              </label>
+              <label className="admin-form-label">{t('admin.products.image')}</label>
               <input type="file" name="image" className="admin-input-ui" accept="image/*" />
-              <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '5px' }}>
-                {t('admin.products.stock')}
-              </label>
+              <label className="admin-form-label">{t('admin.products.stock')}</label>
               <select name="stock" className="admin-input-ui">
                 <option value="in-stock">{t('admin.products.inStock')}</option>
                 <option value="out-of-stock">{t('admin.products.outOfStock')}</option>
               </select>
-              <button type="submit" className="admin-btn-ui">
-                {t('admin.products.save')}
-              </button>
+              <button type="submit" className="admin-btn-ui">{t('admin.products.save')}</button>
             </form>
           )}
+          <div className="admin-table-wrap">
           <table className="admin-table">
-<thead>
-            <tr>
+            <thead>
+              <tr>
                 <th>{t('admin.products.image')}</th>
                 <th>{t('admin.products.product')}</th>
                 <th>{t('admin.products.price')}</th>
                 <th>{t('admin.products.stockLabel')}</th>
                 <th>{t('admin.orders.actions')}</th>
-            </tr>
+              </tr>
             </thead>
             <tbody>
               {!products.length ? (
@@ -150,7 +125,7 @@ export function AdminProducts() {
                           {isOut ? `❌ ${t('admin.products.outShort')}` : `✅ ${t('admin.products.inShort')}`}
                         </span>
                       </td>
-                      <td style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      <td className="admin-table-actions">
                         <button
                           type="button"
                           className="admin-btn-ui"
@@ -169,6 +144,7 @@ export function AdminProducts() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </section>
       <div className={`admin-alert-toast ${alert ? 'show' : ''}`}>{alert}</div>

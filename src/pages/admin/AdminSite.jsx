@@ -20,7 +20,8 @@ export function AdminSite() {
     setSubtitle(siteContent.subtitle || '')
   }, [socialLinks, siteContent])
 
-  const handleSave = () => {
+  const handleSave = (e) => {
+    e?.preventDefault()
     setSocialLinks({ whatsapp, instagram, phone })
     setSiteContent({ title, subtitle })
     setAlert(t('admin.site.saved'))
@@ -34,58 +35,54 @@ export function AdminSite() {
           <h3>{t('admin.site.title')}</h3>
         </div>
         <div className="admin-panel-body">
-          <div className="admin-site-editor-grid">
-            <div className="admin-editor-section">
-              <h4>{t('admin.site.heroTitle')}</h4>
-              <input
-                type="text"
-                className="admin-input-ui"
-                placeholder={t('admin.site.heroTitlePlaceholder')}
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-              <textarea
-                className="admin-input-ui"
-                placeholder={t('admin.site.heroDescPlaceholder')}
-                rows={3}
-                value={subtitle}
-                onChange={(e) => setSubtitle(e.target.value)}
-                style={{ resize: 'vertical', minHeight: '80px' }}
-              />
+          <form onSubmit={handleSave} className="admin-site-form">
+            <div className="admin-site-editor-grid">
+              <div className="admin-editor-section">
+                <h4>{t('admin.site.heroTitle')}</h4>
+                <input
+                  type="text"
+                  className="admin-input-ui"
+                  placeholder={t('admin.site.heroTitlePlaceholder')}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+                <textarea
+                  className="admin-input-ui admin-input-textarea"
+                  placeholder={t('admin.site.heroDescPlaceholder')}
+                  rows={3}
+                  value={subtitle}
+                  onChange={(e) => setSubtitle(e.target.value)}
+                />
+              </div>
+              <div className="admin-editor-section">
+                <h4>{t('admin.site.contactTitle')}</h4>
+                <input
+                  type="text"
+                  className="admin-input-ui"
+                  placeholder={t('admin.site.whatsappPlaceholder')}
+                  value={whatsapp}
+                  onChange={(e) => setWhatsapp(e.target.value)}
+                />
+                <input
+                  type="text"
+                  className="admin-input-ui"
+                  placeholder={t('admin.site.instagramPlaceholder')}
+                  value={instagram}
+                  onChange={(e) => setInstagram(e.target.value)}
+                />
+                <input
+                  type="text"
+                  className="admin-input-ui"
+                  placeholder={t('admin.site.phonePlaceholder')}
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </div>
             </div>
-            <div className="admin-editor-section">
-              <h4>{t('admin.site.contactTitle')}</h4>
-              <input
-                type="text"
-                className="admin-input-ui"
-                placeholder={t('admin.site.whatsappPlaceholder')}
-                value={whatsapp}
-                onChange={(e) => setWhatsapp(e.target.value)}
-              />
-              <input
-                type="text"
-                className="admin-input-ui"
-                placeholder={t('admin.site.instagramPlaceholder')}
-                value={instagram}
-                onChange={(e) => setInstagram(e.target.value)}
-              />
-              <input
-                type="text"
-                className="admin-input-ui"
-                placeholder={t('admin.site.phonePlaceholder')}
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </div>
-          </div>
-          <button
-            type="button"
-            className="admin-btn-ui"
-            style={{ marginTop: '30px', padding: '18px 40px' }}
-            onClick={handleSave}
-          >
-            {t('admin.site.save')}
-          </button>
+            <button type="submit" className="admin-btn-ui admin-site-save">
+              {t('admin.site.save')}
+            </button>
+          </form>
         </div>
       </section>
       <div className={`admin-alert-toast ${alert ? 'show' : ''}`}>{alert}</div>

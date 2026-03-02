@@ -16,6 +16,7 @@ export function AdminOrders() {
         <h3>{t('admin.orders.title')}</h3>
       </div>
       <div className="admin-panel-body">
+        <div className="admin-table-wrap">
         <table className="admin-table">
           <thead>
             <tr>
@@ -88,6 +89,7 @@ export function AdminOrders() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </section>
   )
