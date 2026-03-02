@@ -47,6 +47,8 @@ export const he = {
   // Product card
   'product.outOfStock': 'אזל מהמלאי',
   'product.addToCart': 'הוספה לסל',
+  'product.readMore': 'קרא עוד',
+  'product.showLess': 'הצג פחות',
 
   // Checkout
   'checkout.title': 'פרטי הזמנה',
