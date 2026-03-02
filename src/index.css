@@ -9,6 +9,10 @@
   --whatsapp-green: #25D366;
   --border-radius-full: 50px;
   --border-radius-card: 20px;
+  /* Page background pattern (sea-tinted, subtle on off-white) */
+  --bg-pattern: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232C5E5E' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  /* Hero overlay pattern (white, on gradient) */
+  --hero-pattern: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,6 +20,7 @@
 body {
   font-family: 'Assistant', sans-serif;
   background-color: var(--off-white);
+  background-image: var(--hero-pattern);
   color: var(--text-dark);
   min-height: 100vh;
   overflow-x: hidden;
@@ -165,9 +170,23 @@ a { color: inherit; text-decoration: none; }
   content: '';
   position: absolute;
   inset: 0;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  opacity: 0.5;
+  background-image: var(--hero-pattern);
+  opacity: 0.6;
 }
+
+/* Home hero: seashore background */
+.hero-seashore {
+  background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920');
+  background-size: cover;
+  background-position: center;
+  background-color: var(--sea-deep);
+}
+.hero-seashore::before {
+  background: linear-gradient(180deg, rgba(20, 45, 50, 0.65) 0%, rgba(20, 45, 50, 0.88) 100%);
+  background-image: none;
+  opacity: 1;
+}
+
 .hero-content-clean {
   position: relative;
   z-index: 1;
@@ -184,6 +203,19 @@ a { color: inherit; text-decoration: none; }
   margin-bottom: 30px;
   font-weight: 300;
   text-shadow: 0 1px 5px rgba(0,0,0,0.3);
+}
+
+/* Better contrast on seashore hero */
+.hero-seashore .hero-content-clean {
+  background: rgba(0, 0, 0, 0.25);
+  padding: 2rem 2.5rem;
+  border-radius: 16px;
+}
+.hero-seashore .hero-content-clean h2 {
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 4px 20px rgba(0,0,0,0.4);
+}
+.hero-seashore .hero-content-clean p {
+  text-shadow: 0 1px 6px rgba(0,0,0,0.5), 0 2px 12px rgba(0,0,0,0.4);
 }
 
 /* Footer */

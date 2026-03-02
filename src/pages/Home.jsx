@@ -12,7 +12,7 @@ export function Home() {
 
   return (
     <main id="home-page" className="page active">
-      <section className="hero">
+      <section className="hero hero-seashore">
         <div className="hero-content-clean">
           <h2>{title}</h2>
           <h2>art&Candle</h2>
