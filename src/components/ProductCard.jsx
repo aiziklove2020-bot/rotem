@@ -1,24 +1,54 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useCart } from '../context/CartContext'
 import { useTranslation } from '../i18n/useTranslation'
+import { getProductImages } from '../utils/productImages'
+import { ProductDetailModal } from './ProductDetailModal'
 
 const DESCRIPTION_PREVIEW_LENGTH = 80
+const CAROUSEL_INTERVAL_MS = 4000
 
 export function ProductCard({ product }) {
   const { addToCart } = useCart()
   const t = useTranslation()
-  const [descriptionExpanded, setDescriptionExpanded] = useState(false)
+  const [detailModalOpen, setDetailModalOpen] = useState(false)
+  const [carouselIndex, setCarouselIndex] = useState(0)
+  const imageList = getProductImages(product)
   const isOut = product.stock === 'out-of-stock'
   const desc = product.description || ''
   const needsToggle = desc.length > DESCRIPTION_PREVIEW_LENGTH
-  const showPreview = needsToggle && !descriptionExpanded
-  const displayDesc = showPreview ? desc.slice(0, DESCRIPTION_PREVIEW_LENGTH).trim() + '…' : desc
+  const displayDesc = needsToggle ? desc.slice(0, DESCRIPTION_PREVIEW_LENGTH).trim() + '…' : desc
 
-  const media = product.image ? (
-    <img src={product.image} className="card-product-img" alt={product.name} />
-  ) : (
-    <div style={{ fontSize: '4rem', marginBottom: '15px' }}>{product.emoji || '🕯️'}</div>
-  )
+  useEffect(() => {
+    if (imageList.length <= 1) return
+    const id = setInterval(() => {
+      setCarouselIndex((i) => (i + 1) % imageList.length)
+    }, CAROUSEL_INTERVAL_MS)
+    return () => clearInterval(id)
+  }, [imageList.length])
+
+  const media =
+    imageList.length > 0 ? (
+      <div className="card-media">
+        <img
+          src={imageList[carouselIndex]}
+          className="card-product-img"
+          alt={product.name}
+        />
+        {imageList.length > 1 && (
+          <div className="card-carousel-dots">
+            {imageList.map((_, i) => (
+              <span
+                key={i}
+                className={`card-carousel-dot ${i === carouselIndex ? 'active' : ''}`}
+                aria-hidden
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    ) : (
+      <div className="card-media" style={{ fontSize: '4rem' }}>{product.emoji || '🕯️'}</div>
+    )
 
   return (
     <div className="card">
@@ -46,9 +76,9 @@ export function ProductCard({ product }) {
             <button
               type="button"
               className="card-read-more"
-              onClick={() => setDescriptionExpanded((e) => !e)}
+              onClick={() => setDetailModalOpen(true)}
             >
-              {descriptionExpanded ? t('product.showLess') : t('product.readMore')}
+              {t('product.readMore')}
             </button>
           )}
         </p>
@@ -65,6 +95,7 @@ export function ProductCard({ product }) {
       >
         {isOut ? t('product.outOfStock') : t('product.addToCart')}
       </button>
+      <ProductDetailModal product={product} open={detailModalOpen} onClose={() => setDetailModalOpen(false)} />
     </div>
   )
 }

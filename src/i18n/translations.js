@@ -49,6 +49,10 @@ export const he = {
   'product.addToCart': 'הוספה לסל',
   'product.readMore': 'קרא עוד',
   'product.showLess': 'הצג פחות',
+  'product.close': 'סגור',
+  'product.prevImage': 'תמונה קודמת',
+  'product.nextImage': 'תמונה הבאה',
+  'product.clickToEnlarge': 'לחץ להגדלה',
 
   // Checkout
   'checkout.title': 'פרטי הזמנה',
@@ -107,6 +111,7 @@ export const he = {
   'admin.products.price': 'מחיר (₪)',
   'admin.products.emoji': "אמוג'י (אם אין תמונה)",
   'admin.products.image': 'תמונה',
+  'admin.products.imagesHint': 'ניתן לבחור מספר תמונות (Ctrl/Cmd+לחיצה)',
   'admin.products.stock': 'סטטוס מלאי',
   'admin.products.inStock': 'במלאי ✅',
   'admin.products.outOfStock': 'אזל מהמלאי ❌',

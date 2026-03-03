@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useData } from '../../context/DataContext'
 import { useTranslation } from '../../i18n/useTranslation'
+import { getProductImages } from '../../utils/productImages'
 
 export function AdminProducts() {
   const { products, addProduct, updateProduct, deleteProduct } = useData()
@@ -22,17 +23,16 @@ export function AdminProducts() {
       window.alert(t('admin.products.fillNamePrice'))
       return
     }
-    const imageFile = fd.get('image')
-    let imageData = null
-    if (imageFile?.size) {
-      imageData = await readAndResizeImage(imageFile)
-    }
+    const imageFiles = fd.getAll('images').filter((f) => f?.size > 0)
+    const images = imageFiles.length
+      ? await Promise.all(imageFiles.map((file) => readAndResizeImage(file)))
+      : []
     await addProduct({
       name,
       description: fd.get('description')?.toString() || '',
       price: parseFloat(price),
       emoji: fd.get('emoji')?.toString() || '🕯️',
-      image: imageData,
+      ...(images.length ? { images } : {}),
       stock: fd.get('stock')?.toString() || 'in-stock',
     })
     e.target.reset()
@@ -71,7 +71,8 @@ export function AdminProducts() {
               <label className="admin-form-label">{t('admin.products.emoji')}</label>
               <input type="text" name="emoji" className="admin-input-ui" placeholder="🕯️" />
               <label className="admin-form-label">{t('admin.products.image')}</label>
-              <input type="file" name="image" className="admin-input-ui" accept="image/*" />
+              <input type="file" name="images" className="admin-input-ui" accept="image/*" multiple />
+              <span style={{ fontSize: '0.85rem', color: 'var(--sea-medium)', display: 'block', marginTop: '4px' }}>{t('admin.products.imagesHint')}</span>
               <label className="admin-form-label">{t('admin.products.stock')}</label>
               <select name="stock" className="admin-input-ui">
                 <option value="in-stock">{t('admin.products.inStock')}</option>
@@ -101,14 +102,15 @@ export function AdminProducts() {
               ) : (
                 products.map((p) => {
                   const isOut = p.stock === 'out-of-stock'
+                  const firstImg = getProductImages(p)[0]
                   return (
                     <tr key={p.id}>
                       <td>
-                        {p.image ? (
+                        {firstImg ? (
                           <img
-                            src={p.image}
+                            src={firstImg}
                             alt=""
-                            style={{ width: 50, height: 50, borderRadius: 8, objectFit: 'cover' }}
+                            style={{ width: 50, height: 50, borderRadius: 8, objectFit: 'contain', background: 'var(--sand-warm)' }}
                           />
                         ) : (
                           <span style={{ fontSize: '2rem' }}>{p.emoji || '🕯️'}</span>

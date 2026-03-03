@@ -24,7 +24,7 @@ export function CartSidebar({ open, onClose, onCheckout }) {
             cart.map((item) => (
               <div key={item.id} className="cart-item">
                 <div className="cart-thumb">
-                  {item.image ? <img src={item.image} alt={item.name} /> : (item.emoji || '🕯️')}
+                  {(item.images?.[0] ?? item.image) ? <img src={item.images?.[0] ?? item.image} alt={item.name} /> : (item.emoji || '🕯️')}
                 </div>
                 <div className="cart-item-info">
                   <div className="cart-item-name">{item.name}</div>
