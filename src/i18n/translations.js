@@ -66,6 +66,7 @@ export const he = {
   'checkout.backToCart': 'חזור לסל',
   'checkout.fillNamePhone': 'נא למלא שם וטלפון',
   'checkout.thankYou': 'תודה {{name}}! ההזמנה התקבלה 🎉\nניצור איתך קשר בקרוב.',
+  'checkout.saveFailed': 'ההזמנה נשמרה אצלך במכשיר אך לא הועברה לשרת. נסי שוב או צרי איתנו קשר.',
 
   // Footer
   'footer.copyright': '© 2025 רותם בר | אומנות הנרות והים',

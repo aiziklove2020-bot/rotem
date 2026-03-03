@@ -87,7 +87,9 @@ export function DataProvider({ children }) {
           setOrders(list)
           localStorage.setItem(ORDERS_KEY, JSON.stringify(list))
         }
-      } catch {}
+      } catch (err) {
+        console.error('[Admin] Failed to load orders from Firebase:', err?.message || err)
+      }
     }
     loadOrders()
     return () => { mounted = false }
@@ -151,6 +153,17 @@ export function DataProvider({ children }) {
     }
   }
 
+  /** Remove undefined values so Firestore accepts the document */
+  const sanitizeForFirestore = (obj) => {
+    if (obj === null || typeof obj !== 'object') return obj
+    if (Array.isArray(obj)) return obj.map(sanitizeForFirestore)
+    return Object.fromEntries(
+      Object.entries(obj)
+        .filter(([, v]) => v !== undefined)
+        .map(([k, v]) => [k, sanitizeForFirestore(v)])
+    )
+  }
+
   const addOrder = async (order) => {
     const id = String(order.id || Date.now())
     const data = { ...order, id }
@@ -161,8 +174,11 @@ export function DataProvider({ children }) {
     })
     if (useFirebase) {
       try {
-        await setDoc(doc(db, 'orders', id), data)
-      } catch {}
+        await setDoc(doc(db, 'orders', id), sanitizeForFirestore(data))
+      } catch (err) {
+        console.error('[Checkout] Failed to save order to Firebase:', err?.message || err)
+        throw err
+      }
     }
   }
 

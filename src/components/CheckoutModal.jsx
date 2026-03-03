@@ -24,13 +24,17 @@ export function CheckoutModal({ open, onClose }) {
       items: cart.map((i) => ({ ...i, quantity: i.qty || 1 })),
       total,
     }
-    await addOrder(order)
-    clearCart()
-    setName('')
-    setPhone('')
-    setEmail('')
-    onClose()
-    window.alert(t('checkout.thankYou', { name: name.trim() }))
+    try {
+      await addOrder(order)
+      clearCart()
+      setName('')
+      setPhone('')
+      setEmail('')
+      onClose()
+      window.alert(t('checkout.thankYou', { name: name.trim() }))
+    } catch (err) {
+      window.alert(t('checkout.saveFailed') || 'Order was saved locally but could not sync. Please try again or contact us.')
+    }
   }
 
   if (!open) return null
