@@ -36,10 +36,10 @@ export function ImageLightbox({ open, src, images = [], currentIndex = 0, onClos
       {hasMultiple && (
         <>
           <button type="button" className="lightbox-nav lightbox-prev" onClick={onPrev} aria-label={t('product.prevImage')}>
-            ‹
+            ›
           </button>
           <button type="button" className="lightbox-nav lightbox-next" onClick={onNext} aria-label={t('product.nextImage')}>
-            ›
+            ‹
           </button>
         </>
       )}

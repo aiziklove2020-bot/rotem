@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useData } from '../../context/DataContext'
 import { useTranslation } from '../../i18n/useTranslation'
 import { getProductImages } from '../../utils/productImages'
@@ -10,6 +10,7 @@ export function AdminProducts() {
   const [editingProduct, setEditingProduct] = useState(null)
   const [editImages, setEditImages] = useState([])
   const [alert, setAlert] = useState('')
+  const formRef = useRef(null)
 
   useEffect(() => {
     if (editingProduct) {
@@ -18,6 +19,12 @@ export function AdminProducts() {
       setEditImages([])
     }
   }, [editingProduct])
+
+  useEffect(() => {
+    if (formOpen && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [formOpen, editingProduct])
 
   const showAlert = (msg) => {
     setAlert(msg)
@@ -66,17 +73,23 @@ export function AdminProducts() {
     const stock = fd.get('stock')?.toString() || 'in-stock'
 
     if (editingProduct) {
-      await updateProduct(editingProduct.id, {
-        name,
-        description,
-        price: parseFloat(price),
-        emoji,
-        stock,
-        images: editImages,
-      })
-      e.target.reset()
-      closeForm()
-      showAlert(t('admin.products.updated'))
+      const productId = editingProduct.id
+      try {
+        await updateProduct(productId, {
+          name,
+          description,
+          price: parseFloat(price),
+          emoji,
+          stock,
+          images: editImages,
+        })
+        e.target.reset()
+        closeForm()
+        showAlert(t('admin.products.updated'))
+      } catch (err) {
+        console.error('Update product failed:', err)
+        window.alert(t('admin.products.updateError'))
+      }
     } else {
       const imageFiles = fd.getAll('images').filter((f) => f?.size > 0)
       const images = imageFiles.length
@@ -117,7 +130,7 @@ export function AdminProducts() {
         </div>
         <div className="admin-panel-body">
           {formOpen && (
-            <form key={editingProduct?.id ?? 'new'} onSubmit={handleSubmit} className="admin-product-form">
+            <form ref={formRef} key={editingProduct?.id ?? 'new'} onSubmit={handleSubmit} className="admin-product-form">
               <h4 style={{ marginBottom: '1rem', color: 'var(--sea-deep)' }}>
                 {editingProduct ? t('admin.products.editProduct') : t('admin.products.add')}
               </h4>
@@ -219,14 +232,18 @@ export function AdminProducts() {
               </tr>
             </thead>
             <tbody>
-              {!products.length ? (
-                <tr>
-                  <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px' }}>
-                    {t('admin.products.empty')}
-                  </td>
-                </tr>
-              ) : (
-                products.map((p) => {
+              {(() => {
+                const displayedProducts = editingProduct
+                  ? products.filter((p) => p.id !== editingProduct.id)
+                  : products
+                return !displayedProducts.length ? (
+                  <tr>
+                    <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px' }}>
+                      {editingProduct ? t('admin.products.editingProduct') : t('admin.products.empty')}
+                    </td>
+                  </tr>
+                ) : (
+                  displayedProducts.map((p) => {
                   const isOut = p.stock === 'out-of-stock'
                   const firstImg = getProductImages(p)[0]
                   return (
@@ -277,7 +294,8 @@ export function AdminProducts() {
                     </tr>
                   )
                 })
-              )}
+                )
+              })()}
             </tbody>
           </table>
           </div>

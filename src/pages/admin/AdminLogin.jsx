@@ -51,6 +51,7 @@ export function AdminLogin() {
             value={user}
             onChange={(e) => setUser(e.target.value)}
             dir="rtl"
+            autoComplete="username"
           />
           <input
             type="password"
@@ -59,6 +60,7 @@ export function AdminLogin() {
             value={pass}
             onChange={(e) => setPass(e.target.value)}
             dir="rtl"
+            autoComplete="current-password"
           />
           <button type="submit" className="admin-btn-ui admin-btn-full admin-login-submit">
             {t('admin.loginButton')}

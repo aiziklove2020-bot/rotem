@@ -28,9 +28,11 @@ export function ProductDetailModal({ product, open, onClose }) {
         aria-label={product.name}
       >
         <div className="product-detail-modal" onClick={(e) => e.stopPropagation()}>
-          <button type="button" className="product-detail-close" onClick={onClose} aria-label={t('product.close')}>
-            ✕
-          </button>
+          <div className="product-detail-modal-header">
+            <button type="button" className="product-detail-close" onClick={onClose} aria-label={t('product.close')}>
+              ✕
+            </button>
+          </div>
           {imageList.length > 0 ? (
             <>
               <div
@@ -45,10 +47,10 @@ export function ProductDetailModal({ product, open, onClose }) {
                 {imageList.length > 1 && (
                   <>
                     <button type="button" className="detail-nav prev" onClick={(e) => { e.stopPropagation(); goPrev(); }} aria-label={t('product.prevImage')}>
-                      ‹
+                      ›
                     </button>
                     <button type="button" className="detail-nav next" onClick={(e) => { e.stopPropagation(); goNext(); }} aria-label={t('product.nextImage')}>
-                      ›
+                      ‹
                     </button>
                   </>
                 )}

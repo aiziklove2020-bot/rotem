@@ -4,7 +4,7 @@ import { ProductCard } from '../components/ProductCard'
 import { useTranslation } from '../i18n/useTranslation'
 
 export function Home() {
-  const { products, siteContent } = useData()
+  const { products, productsLoading, siteContent } = useData()
   const t = useTranslation()
   const title = siteContent.title || t('home.defaultTitle')
   const subtitle = siteContent.subtitle || t('home.defaultSubtitle')
@@ -27,9 +27,15 @@ export function Home() {
       <section className="section-padding">
         <h2 className="section-title">{t('home.featuredTitle')}</h2>
         <div className="product-grid">
-          {featured.length
-            ? featured.map((p) => <ProductCard key={p.id} product={p} />)
-            : <p style={{ gridColumn: '1/-1', textAlign: 'center' }}>{t('home.comingSoon')}</p>}
+          {productsLoading ? (
+            <div className="products-loader" style={{ gridColumn: '1/-1', display: 'flex', justifyContent: 'center', padding: '2rem' }}>
+              <span className="loader-spinner" aria-hidden />
+            </div>
+          ) : featured.length ? (
+            featured.map((p) => <ProductCard key={p.id} product={p} />)
+          ) : (
+            <p style={{ gridColumn: '1/-1', textAlign: 'center' }}>{t('home.comingSoon')}</p>
+          )}
         </div>
         <div style={{ textAlign: 'center', marginTop: '40px' }}>
           <Link to="/shop" style={{ color: 'var(--accent-gold)', fontWeight: 'bold', textDecoration: 'underline' }}>

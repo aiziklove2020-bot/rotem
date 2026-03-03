@@ -4,7 +4,7 @@ import { useTranslation } from '../i18n/useTranslation'
 import { getProductImages } from '../utils/productImages'
 import { ProductDetailModal } from './ProductDetailModal'
 
-const DESCRIPTION_PREVIEW_LENGTH = 80
+const DESCRIPTION_PREVIEW_LINES = 2
 const CAROUSEL_INTERVAL_MS = 4000
 
 export function ProductCard({ product }) {
@@ -15,8 +15,11 @@ export function ProductCard({ product }) {
   const imageList = getProductImages(product)
   const isOut = product.stock === 'out-of-stock'
   const desc = product.description || ''
-  const needsToggle = desc.length > DESCRIPTION_PREVIEW_LENGTH
-  const displayDesc = needsToggle ? desc.slice(0, DESCRIPTION_PREVIEW_LENGTH).trim() + '…' : desc
+  const lines = desc.split(/\r?\n/)
+  const needsToggle = lines.length > DESCRIPTION_PREVIEW_LINES
+  const displayDesc = needsToggle
+    ? lines.slice(0, DESCRIPTION_PREVIEW_LINES).join('\n').trim() + '…'
+    : desc
 
   useEffect(() => {
     if (imageList.length <= 1) return
@@ -25,6 +28,9 @@ export function ProductCard({ product }) {
     }, CAROUSEL_INTERVAL_MS)
     return () => clearInterval(id)
   }, [imageList.length])
+
+  const goPrev = () => setCarouselIndex((i) => (i - 1 + imageList.length) % imageList.length)
+  const goNext = () => setCarouselIndex((i) => (i + 1) % imageList.length)
 
   const media =
     imageList.length > 0 ? (
@@ -35,15 +41,33 @@ export function ProductCard({ product }) {
           alt={product.name}
         />
         {imageList.length > 1 && (
-          <div className="card-carousel-dots">
-            {imageList.map((_, i) => (
-              <span
-                key={i}
-                className={`card-carousel-dot ${i === carouselIndex ? 'active' : ''}`}
-                aria-hidden
-              />
-            ))}
-          </div>
+          <>
+            <button
+              type="button"
+              className="card-carousel-nav card-carousel-prev"
+              onClick={(e) => { e.stopPropagation(); goPrev(); }}
+              aria-label={t('product.prevImage')}
+            >
+              ›
+            </button>
+            <button
+              type="button"
+              className="card-carousel-nav card-carousel-next"
+              onClick={(e) => { e.stopPropagation(); goNext(); }}
+              aria-label={t('product.nextImage')}
+            >
+              ‹
+            </button>
+            <div className="card-carousel-dots">
+              {imageList.map((_, i) => (
+                <span
+                  key={i}
+                  className={`card-carousel-dot ${i === carouselIndex ? 'active' : ''}`}
+                  aria-hidden
+                />
+              ))}
+            </div>
+          </>
         )}
       </div>
     ) : (
@@ -51,7 +75,7 @@ export function ProductCard({ product }) {
     )
 
   return (
-    <div className="card">
+    <div className={`card ${detailModalOpen ? 'card-detail-open' : ''}`}>
       {media}
       {isOut && (
         <span

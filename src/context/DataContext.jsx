@@ -11,6 +11,7 @@ const CONTENT_KEY = 'siteContent'
 
 export function DataProvider({ children }) {
   const [products, setProducts] = useState(() => JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]'))
+  const [productsLoading, setProductsLoading] = useState(true)
   const [orders, setOrders] = useState(() => JSON.parse(localStorage.getItem(ORDERS_KEY) || '[]'))
   const [socialLinks, setSocialLinksState] = useState(() => JSON.parse(localStorage.getItem(SOCIAL_KEY) || '{}'))
   const [siteContent, setSiteContentState] = useState(() => JSON.parse(localStorage.getItem(CONTENT_KEY) || '{}'))
@@ -18,21 +19,60 @@ export function DataProvider({ children }) {
 
   useEffect(() => {
     let mounted = true
-    async function init() {
-      try {
-        const snapProducts = await getDocs(collection(db, 'products'))
-        if (mounted && snapProducts.docs.length >= 0) {
-          const list = snapProducts.docs.map(d => ({ id: d.id, ...d.data() }))
-          setProducts(list)
-          localStorage.setItem(PRODUCTS_KEY, JSON.stringify(list))
-          setUseFirebase(true)
-        }
-      } catch {
-        setUseFirebase(false)
-      }
+    const PRODUCTS_LOAD_TIMEOUT_MS = 12000
+    const RETRY_DELAY_MS = 1500
+    const MAX_ATTEMPTS = 3
+    const timeoutId = setTimeout(() => {
+      if (mounted) setProductsLoading(false)
+    }, PRODUCTS_LOAD_TIMEOUT_MS)
+
+    function imageCount(p) {
+      if (!p) return 0
+      if (p.images?.length) return p.images.length
+      return p.image ? 1 : 0
     }
-    init()
-    return () => { mounted = false }
+
+    async function init() {
+      let lastError
+      for (let attempt = 1; attempt <= MAX_ATTEMPTS && mounted; attempt++) {
+        try {
+          const snapProducts = await getDocs(collection(db, 'products'))
+          if (!mounted) return
+          const fromDb = snapProducts.docs.map((d) => ({ id: d.id, ...d.data() }))
+          const idsFromDb = new Set(fromDb.map((p) => String(p.id)))
+          setProducts((prev) => {
+            const localOnly = prev.filter((p) => !idsFromDb.has(String(p.id)))
+            const mergedFromDb = fromDb.map((dbProduct) => {
+              const local = prev.find((p) => String(p.id) === String(dbProduct.id))
+              if (local && imageCount(local) > imageCount(dbProduct)) return local
+              return dbProduct
+            })
+            const merged = [...mergedFromDb, ...localOnly]
+            try {
+              localStorage.setItem(PRODUCTS_KEY, JSON.stringify(merged))
+            } catch (_) {}
+            return merged
+          })
+          setUseFirebase(true)
+          return
+        } catch (err) {
+          lastError = err
+          if (attempt < MAX_ATTEMPTS && mounted) {
+            await new Promise((r) => setTimeout(r, RETRY_DELAY_MS))
+          }
+        }
+      }
+      if (mounted) setUseFirebase(false)
+    }
+
+    init().finally(() => {
+      clearTimeout(timeoutId)
+      if (mounted) setProductsLoading(false)
+    })
+    return () => {
+      mounted = false
+      clearTimeout(timeoutId)
+    }
   }, [])
 
   useEffect(() => {
@@ -80,15 +120,21 @@ export function DataProvider({ children }) {
   }
 
   const updateProduct = async (id, updates) => {
+    const idStr = String(id)
     setProducts(prev => {
-      const next = prev.map(p => (p.id === id ? { ...p, ...updates } : p))
+      const next = prev.map(p => (String(p.id) === idStr ? { ...p, ...updates } : p))
       localStorage.setItem(PRODUCTS_KEY, JSON.stringify(next))
       return next
     })
     if (useFirebase) {
       try {
-        await updateDoc(doc(db, 'products', id), updates)
-      } catch {}
+        const cleanUpdates = Object.fromEntries(
+          Object.entries(updates).filter(([, v]) => v !== undefined)
+        )
+        await updateDoc(doc(db, 'products', idStr), cleanUpdates)
+      } catch (err) {
+        throw err
+      }
     }
   }
 
@@ -137,6 +183,7 @@ export function DataProvider({ children }) {
     <DataContext.Provider
       value={{
         products,
+        productsLoading,
         orders,
         socialLinks,
         siteContent,
