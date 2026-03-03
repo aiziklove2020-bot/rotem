@@ -106,6 +106,11 @@ export const he = {
   // Admin - Products
   'admin.products.title': 'מוצרים במלאי',
   'admin.products.add': '+ הוסף מוצר',
+  'admin.products.edit': 'ערוך',
+  'admin.products.editProduct': 'עריכת מוצר',
+  'admin.products.updated': 'המוצר עודכן! ✨',
+  'admin.products.removeImage': 'הסר תמונה',
+  'admin.products.addMoreImages': 'הוסף תמונות',
   'admin.products.name': 'שם המוצר',
   'admin.products.description': 'תיאור',
   'admin.products.price': 'מחיר (₪)',

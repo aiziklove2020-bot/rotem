@@ -317,6 +317,45 @@
   gap: 8px;
   flex-wrap: wrap;
 }
+.admin-edit-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.admin-edit-image-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.admin-edit-image-thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  background: var(--sand-warm, #f5f0e8);
+  border-radius: 8px;
+  display: block;
+}
+.admin-edit-image-remove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: #e74c3c;
+  color: white;
+  font-size: 0.85rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin-edit-image-remove:hover {
+  background: #c0392b;
+}
 .admin-site-form { display: block; }
 .admin-site-save { margin-top: 30px; padding: 18px 40px; }
 .admin-site-editor-grid {
