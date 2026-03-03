@@ -90,6 +90,8 @@ export const he = {
   'admin.stats.orders': 'הזמנות פתוחות',
   'admin.stats.products': 'מוצרים בקטלוג',
   'admin.stats.connection': 'סטטוס חיבור',
+  'admin.stats.online': 'מחובר',
+  'admin.stats.offline': 'מקומי',
 
   // Admin - Orders
   'admin.orders.title': 'הזמנות אחרונות',

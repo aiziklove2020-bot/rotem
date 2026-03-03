@@ -99,7 +99,7 @@ export function AdminLayout() {
           <div className="admin-stat-box">
             <span>{t('admin.stats.connection')}</span>
             <h2 className={useFirebase ? 'admin-stat-firebase' : 'admin-stat-online'}>
-              {useFirebase ? 'FIREBASE' : 'ONLINE'}
+              {useFirebase ? t('admin.stats.online') : t('admin.stats.offline')}
             </h2>
           </div>
         </div>
